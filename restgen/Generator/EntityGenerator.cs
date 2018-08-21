@@ -20,7 +20,7 @@ namespace restgen.Generator
         Object
     };
 
-    public class EntityGenerator
+    public class EntityGenerator : BaseGenerator
     {
         public string entityName { get; set; }
         private List<Field> fields = new List<Field>();
@@ -130,7 +130,8 @@ namespace restgen.Generator
         /// <returns></returns>
         public EntityGenerator generate() {
 
-            template = File.ReadAllText(@"Template\entity.t");
+            //template = File.ReadAllText(@"Template\entity.t");
+            template = this.loadTemplate("entity.t");
 
             Regex rgx = new Regex("{{ lowerclass }}");
             template = rgx.Replace(template, this.entityName.ToLower());
@@ -186,7 +187,8 @@ namespace restgen.Generator
         /// <param name="field"></param>
         /// <returns></returns>
         private string generateForeignProperties(Field field) {
-            string fieldTemplate = File.ReadAllText(@"Template\relation-m1.t");
+            //string fieldTemplate = File.ReadAllText(@"Template\relation-m1.t");
+            string fieldTemplate = this.loadTemplate("relation-m1.t");
 
             string req = (field.Required) ? "[Required]" : "";
             Regex rgx = new Regex("{{ required }}");
@@ -207,8 +209,9 @@ namespace restgen.Generator
         /// <param name="field"></param>
         /// <returns></returns>
         private string generateStandardProperties(Field field) {
-            
-            string fieldTemplate = File.ReadAllText(@"Template\field.t");
+
+            // string fieldTemplate = File.ReadAllText(@"Template\field.t");
+            string fieldTemplate = this.loadTemplate("field.t");
 
             Regex rgx = new Regex("{{ column }}");
             fieldTemplate = rgx.Replace(fieldTemplate, field.Name.ToLower());

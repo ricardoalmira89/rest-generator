@@ -8,7 +8,7 @@ using System.Text.RegularExpressions;
 
 namespace restgen.Generator
 {
-    class RepositoryGenerator
+    class RepositoryGenerator : BaseGenerator
     {
         private string entityName;
         private string template;
@@ -20,7 +20,8 @@ namespace restgen.Generator
         public RepositoryGenerator generate() {
 
             Console.WriteLine("Generating repository");
-            template = File.ReadAllText(@"Template\repository.t");
+            //template = File.ReadAllText(@"Template\repository.t");
+            template = this.loadTemplate("repository.t");
 
             Regex rgx = new Regex("{{ classname }}");
             template = rgx.Replace(template, this.entityName);
