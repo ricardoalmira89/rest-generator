@@ -1,7 +1,6 @@
 ﻿using System;
-
-using AlmRest;
 using AlmRest.Repository;
+using App.Models;
 
 namespace App.Repository
 {

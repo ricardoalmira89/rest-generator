@@ -1,9 +1,6 @@
 ﻿using System;
 using App.Models;
 using App.Repository;
-
-using AlmRest;
-using AlmRest.Repository;
 using AlmRest.Controller;
 
 namespace App.Controllers

@@ -50,6 +50,7 @@
     <Compile Include="Generator\EntityGenerator.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Sync\SyncManager.cs" />
     <None Include="Template\relation-m1.t">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
