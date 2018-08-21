@@ -24,6 +24,7 @@ namespace restgen.Generator
     {
         private string entityName { get; set; }
         private List<Field> fields = new List<Field>();
+        private string template;
 
         public void start() {
             this.AskName();
@@ -34,17 +35,26 @@ namespace restgen.Generator
 
             while (this.AskField()) {}
 
-            this.generate();
-            Console.ReadLine();
+            this
+                .generate()
+                .save();
 
+            Console.ReadLine();
         }
 
+        /// <summary>
+        /// Pregunta por el nombre de la entidad
+        /// </summary>
         private void AskName()
         {
             Console.Write("Entity Name: ");
             entityName = Console.ReadLine();
         }
 
+        /// <summary>
+        /// Pide campo a capo
+        /// </summary>
+        /// <returns></returns>
         private bool AskField() {
 
             Field f = new Field();
@@ -80,6 +90,10 @@ namespace restgen.Generator
             return true;
         }
 
+        /// <summary>
+        /// Pregunta si el campo es requerido
+        /// </summary>
+        /// <param name="f"></param>
         private void AskRequired(Field f)
         {
             Console.Write("is required? [true] : ");
@@ -88,6 +102,10 @@ namespace restgen.Generator
             f.Required = (required == "false" || required == "False") ? false : true;
         }
 
+        /// <summary>
+        /// Pregunta por la entidad foranea, en caso de existir relacion
+        /// </summary>
+        /// <param name="f"></param>
         private void AskForeign(Field f) {
 
             Console.Write("Foreign Entity Name: ");
@@ -101,11 +119,13 @@ namespace restgen.Generator
 
         }
 
-        public void generate() {
+        /// <summary>
+        /// Genera el texto completo de una entidad
+        /// </summary>
+        /// <returns></returns>
+        public EntityGenerator generate() {
 
-            this.entityName = "Instalacion";
-
-            string template = File.ReadAllText(@"Template\entity.t");
+            template = File.ReadAllText(@"Template\entity.t");
 
             Regex rgx = new Regex("{{ lowerclass }}");
             template = rgx.Replace(template, this.entityName.ToLower());
@@ -118,11 +138,20 @@ namespace restgen.Generator
             rgx = new Regex("{{ properties }}");
             template = rgx.Replace(template, props);
 
+            return this;
+        }
 
-            Console.WriteLine(template);
+        /// <summary>
+        /// Genera el fichero de la Entidad
+        /// </summary>
+        public void save() {
 
-            Console.ReadKey();
+            string path = Directory.GetCurrentDirectory() + @"\Models\";
+            if (!Directory.Exists(path)) {
+                Directory.CreateDirectory("Models");
+            }
 
+            File.WriteAllText(path + this.entityName + ".cs", this.template);
         }
 
         /// <summary>
