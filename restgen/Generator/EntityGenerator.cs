@@ -117,10 +117,8 @@ namespace restgen.Generator
 
             if (foreignEntity == "")
                 foreignEntity = textInfo.ToTitleCase(f.Name);
-            else
-            {
-                f.ForeignEntity = foreignEntity;
-            }
+            
+            f.ForeignEntity = foreignEntity;
 
         }
 
