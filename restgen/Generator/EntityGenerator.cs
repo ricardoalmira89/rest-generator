@@ -60,8 +60,6 @@ namespace restgen.Generator
         private bool AskField() {
 
             Field f = new Field();
-
-            
             Console.Write("New field name (press <return> to stop adding fields): ");
 
             string name = Console.ReadLine();
@@ -77,6 +75,10 @@ namespace restgen.Generator
             {
                 RestField kind = (tipo == null) ? RestField.String : (RestField)Enum.Parse(typeof(RestField), (tipo != "") ? tipo : "String");
                 f.Kind = kind;
+
+                if (kind == RestField.String)
+                    this.AskLenght(f);
+
                 fields.Add(f);
             }
             catch (Exception)
@@ -104,6 +106,16 @@ namespace restgen.Generator
             string required = Console.ReadLine();
 
             f.Required = (required == "false" || required == "False") ? false : true;
+        }
+
+        /// <summary>
+        /// Pregunta por el tamanno del campo si es String
+        /// </summary>
+        /// <param name="f"></param>
+        private void AskLenght(Field f) {
+            Console.Write("field lenght? [100] : ");
+            string lenght = Console.ReadLine();
+            f.Lenght = (lenght == "") ? "100" : lenght;
         }
 
         /// <summary>
@@ -221,6 +233,14 @@ namespace restgen.Generator
             rgx = new Regex("{{ required }}");
             fieldTemplate = rgx.Replace(fieldTemplate, req);
 
+
+            string lenght = (field.Lenght != null)
+                ? String.Format("[MaxLength({0}, ErrorMessage = \"{1} no debe exederse de {0} caracteres.\")]", field.Lenght, textInfo.ToTitleCase(field.Name))
+                : "";
+
+            rgx = new Regex("{{ lenght }}");
+            fieldTemplate = rgx.Replace(fieldTemplate, lenght);
+
             return fieldTemplate;
         }
        
@@ -232,10 +252,11 @@ namespace restgen.Generator
         private string name;
         private bool required;
         private string foreignEntity;
+        private string lenght;
 
         public Field() { }
 
-        public Field(RestField kind, string name, bool required, string foreignEntity = null)
+        public Field(RestField kind, string name, bool required, string foreignEntity = null, string lenght = "100")
         {
             this.kind = kind;
             this.name = name;
@@ -265,6 +286,12 @@ namespace restgen.Generator
         {
             get { return foreignEntity; }
             set { foreignEntity = value; }
+        }
+
+        public string Lenght
+        {
+            get { return lenght; }
+            set { lenght = value; }
         }
 
     }
