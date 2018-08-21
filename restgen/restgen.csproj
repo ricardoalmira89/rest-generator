@@ -43,6 +43,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Generator\RepositoryGenerator.cs" />
+    <Compile Include="Generator\ControllerGenerator.cs" />
     <Compile Include="Generator\EntityGenerator.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

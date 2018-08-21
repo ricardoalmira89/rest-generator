@@ -14,6 +14,14 @@ namespace restgen
         {
             EntityGenerator eg = new EntityGenerator();
             eg.start();
+
+            ControllerGenerator cg = new ControllerGenerator(eg.entityName);
+            cg.generate()
+              .save();
+
+            RepositoryGenerator rg = new RepositoryGenerator(eg.entityName);
+            rg.generate()
+              .save();
         }
     }
 }

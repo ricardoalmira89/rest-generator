@@ -8,11 +8,11 @@ using AlmRest.Controller;
 
 namespace App.Controllers
 {
-    public class {{classname}}Controller : GenericController<{{classname}}>
+    public class {{ classname }}Controller : GenericController<{{ classname }}>
     {
-        public {{classname}}Controller()
+        public {{ classname }}Controller()
         {
-            this.repository = new {{classname}}Repository();
+            this.repository = new {{ classname }}Repository();
         }
         
     }

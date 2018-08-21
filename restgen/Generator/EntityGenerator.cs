@@ -22,11 +22,15 @@ namespace restgen.Generator
 
     public class EntityGenerator
     {
-        private string entityName { get; set; }
+        public string entityName { get; set; }
         private List<Field> fields = new List<Field>();
         private string template;
+        private TextInfo textInfo;
 
         public void start() {
+
+            this.textInfo = new CultureInfo("en-US", false).TextInfo;
+
             this.AskName();
 
             Console.WriteLine();
@@ -38,8 +42,6 @@ namespace restgen.Generator
             this
                 .generate()
                 .save();
-
-            Console.ReadLine();
         }
 
         /// <summary>
@@ -87,6 +89,8 @@ namespace restgen.Generator
             if (f.Kind == RestField.Object)
                 this.AskForeign(f);
 
+            Console.WriteLine();
+
             return true;
         }
 
@@ -108,12 +112,13 @@ namespace restgen.Generator
         /// <param name="f"></param>
         private void AskForeign(Field f) {
 
-            Console.Write("Foreign Entity Name: ");
+            Console.Write("Foreign Entity Name: [{0}] ", textInfo.ToTitleCase(f.Name));
             string foreignEntity = Console.ReadLine();
 
             if (foreignEntity == "")
-                Console.WriteLine("Invalid Foreign Entity!");
-            else {
+                foreignEntity = textInfo.ToTitleCase(f.Name);
+            else
+            {
                 f.ForeignEntity = foreignEntity;
             }
 
@@ -202,8 +207,7 @@ namespace restgen.Generator
         /// <param name="field"></param>
         /// <returns></returns>
         private string generateStandardProperties(Field field) {
-
-            TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
+            
             string fieldTemplate = File.ReadAllText(@"Template\field.t");
 
             Regex rgx = new Regex("{{ column }}");
