@@ -46,6 +46,9 @@
     <Compile Include="Generator\EntityGenerator.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <None Include="Template\relation-m1.t">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Template\field.t">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

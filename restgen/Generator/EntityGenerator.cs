@@ -74,6 +74,9 @@ namespace restgen.Generator
 
             this.AskRequired(f);
 
+            if (f.Kind == RestField.Object)
+                this.AskForeign(f);
+
             return true;
         }
 
@@ -83,6 +86,19 @@ namespace restgen.Generator
             string required = Console.ReadLine();
 
             f.Required = (required == "false" || required == "False") ? false : true;
+        }
+
+        private void AskForeign(Field f) {
+
+            Console.Write("Foreign Entity Name: ");
+            string foreignEntity = Console.ReadLine();
+
+            if (foreignEntity == "")
+                Console.WriteLine("Invalid Foreign Entity!");
+            else {
+                f.ForeignEntity = foreignEntity;
+            }
+
         }
 
         public void generate() {
@@ -116,26 +132,62 @@ namespace restgen.Generator
         private string getGeneratedProperties() {
 
             string result = "";
-            TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
+           
 
             foreach (Field field in this.fields)
             {
-                string fieldTemplate = File.ReadAllText(@"Template\field.t");
-
-                Regex rgx = new Regex("{{ column }}");
-                fieldTemplate = rgx.Replace(fieldTemplate, field.Name.ToLower());
-
-                rgx = new Regex("{{ prop }}");
-                fieldTemplate = rgx.Replace(fieldTemplate, textInfo.ToTitleCase(field.Name));
-
-                string req = (field.Required) ? "Required, " : "";
-                rgx = new Regex("{{ required }}");
-                fieldTemplate = rgx.Replace(fieldTemplate, req);
+                string fieldTemplate = (field.ForeignEntity != null) 
+                    ? this.generateForeignProperties(field) 
+                    : this.generateStandardProperties(field);
 
                 result = result + fieldTemplate + "\n\n";
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// Genera el texto de las propiedades de relacion M:1
+        /// </summary>
+        /// <param name="field"></param>
+        /// <returns></returns>
+        private string generateForeignProperties(Field field) {
+            string fieldTemplate = File.ReadAllText(@"Template\relation-m1.t");
+
+            string req = (field.Required) ? "[Required]" : "";
+            Regex rgx = new Regex("{{ required }}");
+            fieldTemplate = rgx.Replace(fieldTemplate, req);
+
+            rgx = new Regex("{{ foreignEntity }}");
+            fieldTemplate = rgx.Replace(fieldTemplate, field.ForeignEntity);
+
+            rgx = new Regex("{{ foreignLower }}");
+            fieldTemplate = rgx.Replace(fieldTemplate, field.ForeignEntity.ToLower());
+
+            return fieldTemplate;
+        }
+
+        /// <summary>
+        /// Genera el texto de las propiedades normales (string, int, etc)
+        /// </summary>
+        /// <param name="field"></param>
+        /// <returns></returns>
+        private string generateStandardProperties(Field field) {
+
+            TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
+            string fieldTemplate = File.ReadAllText(@"Template\field.t");
+
+            Regex rgx = new Regex("{{ column }}");
+            fieldTemplate = rgx.Replace(fieldTemplate, field.Name.ToLower());
+
+            rgx = new Regex("{{ prop }}");
+            fieldTemplate = rgx.Replace(fieldTemplate, textInfo.ToTitleCase(field.Name));
+
+            string req = (field.Required) ? "Required, " : "";
+            rgx = new Regex("{{ required }}");
+            fieldTemplate = rgx.Replace(fieldTemplate, req);
+
+            return fieldTemplate;
         }
        
     }
@@ -145,14 +197,16 @@ namespace restgen.Generator
         private RestField kind;
         private string name;
         private bool required;
+        private string foreignEntity;
 
         public Field() { }
 
-        public Field(RestField kind, string name, bool required)
+        public Field(RestField kind, string name, bool required, string foreignEntity = null)
         {
             this.kind = kind;
             this.name = name;
             this.required = required;
+            this.foreignEntity = foreignEntity;
         }
 
         public RestField Kind
@@ -171,6 +225,12 @@ namespace restgen.Generator
         {
             get { return required; }
             set { required = value; }
+        }
+
+        public string ForeignEntity
+        {
+            get { return foreignEntity; }
+            set { foreignEntity = value; }
         }
 
     }

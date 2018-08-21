@@ -1,2 +1,2 @@
-﻿        [{{ required }}Column("{{ column }}")]
-        public string {{ prop }} { get; set; }
+﻿[{{ required }}Column("{{ column }}")]
+	public string {{ prop }} { get; set; }
